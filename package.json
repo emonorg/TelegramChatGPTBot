@@ -1,0 +1,19 @@
+{
+  "name": "tlg-gpt",
+  "version": "1.0.0",
+  "description": "Chat GPT in Telegram",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Emad Mamaghani",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@picovoice/leopard-node": "^1.2.0",
+    "dotenv": "^16.0.3",
+    "node-fetch": "^3.3.1",
+    "node-json-db": "^2.1.5",
+    "telegraf": "^4.12.2"
+  }
+}
