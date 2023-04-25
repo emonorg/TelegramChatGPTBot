@@ -28,8 +28,9 @@ bot.on('text', async ctx => {
     if (message[0] === 'cli' && ctx.chat.username === 'emadmamaghani') {
         response = await handleCommand(message[1], message.slice(2))
     } else {
-        sendMessage(ctx.chat.id, 'Give me a sec! on it...')
-        return await handleGPT(ctx, ctx.message.text)
+        const message = await sendMessage(ctx.chat.id, 'Give me a sec! on it...')
+        const responseFronGPT = await handleGPT(ctx, ctx.message.text)
+        return await updateMessage(ctx.chat.id, message.message_id, responseFronGPT)
     }
     sendMessage(ctx.chat.id, response)
 });
@@ -51,7 +52,7 @@ async function handleGPT(ctx, input) {
     let output = await sendRequestToChatGPT(input, promptHistory)
     output = output.replace('output2: ', '')
     await saveToDB(ctx.chat.username, input, output)
-    await sendMessage(ctx.chat.id, output)
+    return output
 }
 
 async function handleCommand(command, args) {
@@ -114,7 +115,11 @@ async function sendRequestToChatGPT(message, promptHistory) {
 }
 
 async function sendMessage(chatId, message) {
-    await bot.telegram.sendMessage(chatId, message)
+    return await bot.telegram.sendMessage(chatId, message)
+}
+
+async function updateMessage(chatId, messageId, message) {
+    return await bot.telegram.editMessageText(chatId, messageId, undefined, message)
 }
 
 async function saveToDB(path, input, output) {
