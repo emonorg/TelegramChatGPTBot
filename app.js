@@ -53,6 +53,7 @@ async function handleGPT(ctx, input) {
         promptHistory = promptHistory.messageLog[promptHistory.messageLog.length - 1]
     let output = await sendRequestToChatGPT(input, promptHistory)
     output = output.replace('output2: ', '')
+    output = output.replace('Output2: ', '')
     await saveToDB(ctx.chat.username, input, output)
     return output
 }
