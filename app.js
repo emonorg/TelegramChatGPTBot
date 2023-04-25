@@ -13,7 +13,7 @@ const RapidApiKey = process.env.RAPID_API_KEY
 const RapidApiHost = process.env.RAPID_HOST
 const picovoiceAccessKey = process.env.PICOVOICE_ACCESS_KEY
 
-const bot = new Telegraf(telegramSandBoxAccessKey)
+const bot = new Telegraf(telegramAccessKey)
 const handle = new Leopard(picovoiceAccessKey);
 
 bot.start(async (ctx) => {
@@ -42,10 +42,16 @@ bot.on('voice', async ctx => {
     await handleGPT(ctx, text)
 });
 
-async function handleGPT(ctx, text) {
-    const response = await sendRequestToChatGPT(text)
-    await saveToDB(ctx.chat.username, text)
-    await sendMessage(ctx.chat.id, response)
+async function handleGPT(ctx, input) {
+    // Get the chat context
+    // Fetch the latest input and output
+    let promptHistory = await readDataFromDB(ctx.chat.username)
+    if (promptHistory != null) 
+        promptHistory = promptHistory.messageLog[promptHistory.messageLog.length - 1]
+    let output = await sendRequestToChatGPT(input, promptHistory)
+    output = output.replace('output2: ', '')
+    await saveToDB(ctx.chat.username, input, output)
+    await sendMessage(ctx.chat.id, output)
 }
 
 async function handleCommand(command, args) {
@@ -79,13 +85,18 @@ async function downloadVoice(ctx, fileId, href) {
     return fileName;
 }
 
-async function sendRequestToChatGPT(message) {
+async function sendRequestToChatGPT(message, promptHistory) {
+    let input
+    if (promptHistory != null)
+        input = `prompt1: ${promptHistory.input} output1: ${promptHistory.output}. prompt2: ${message}`
+    else
+        input = message
     const body = JSON.stringify({
         "model": "gpt-3.5-turbo",
         "messages": [
             {
                 "role": "user",
-                "content": message
+                "content": input
             }
         ]
     })
@@ -106,8 +117,8 @@ async function sendMessage(chatId, message) {
     await bot.telegram.sendMessage(chatId, message)
 }
 
-async function saveToDB(path, value) {
-    await db.push(`/${path}`, {messageLog: [value]}, false);
+async function saveToDB(path, input, output) {
+    await db.push(`/${path}`, {messageLog: [{input, output}]}, false);
 }
 
 async function readDataFromDB(path) {
