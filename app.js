@@ -36,11 +36,13 @@ bot.on('text', async ctx => {
 });
 
 bot.on('voice', async ctx => {
-    sendMessage(ctx.chat.id, 'Give me a sec! I will send you the result...')
+    const message = await sendMessage(ctx.chat.id, 'Give me a sec! I will send you the result...')
     const file = await ctx.telegram.getFileLink(ctx.message.voice.file_id)
     const downloadedFileName = await downloadVoice(ctx, ctx.message.voice.file_id, file.href)
     const text = await getTextFromSpeech(`./voices/${downloadedFileName}.ogg`)
-    await handleGPT(ctx, text)
+    const responseFromGPT = await handleGPT(ctx, text)
+    bot.telegram.deleteMessage(ctx.chat.id, message.message_id)
+    await sendMessage(ctx.chat.id, responseFromGPT)
 });
 
 async function handleGPT(ctx, input) {
