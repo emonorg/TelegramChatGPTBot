@@ -92,7 +92,7 @@ async function downloadVoice(ctx, fileId, href) {
 async function sendRequestToChatGPT(message, promptHistory) {
     let input
     if (promptHistory != null)
-        input = `prompt1: ${promptHistory.input} output1: ${promptHistory.output}. prompt2: ${message}`
+        input = `prompt1: ${promptHistory.input} output1: ${promptHistory.output.match(/^(.*?)[.?!]\s/) == null ? promptHistory.output : promptHistory.output.match(/^(.*?)[.?!]\s/)[1]}. prompt2: ${message}`
     else
         input = message
     const body = JSON.stringify({
