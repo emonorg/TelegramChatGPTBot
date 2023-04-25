@@ -28,7 +28,7 @@ bot.on('text', async ctx => {
     if (message[0] === 'cli' && ctx.chat.username === 'emadmamaghani') {
         response = await handleCommand(message[1], message.slice(2))
     } else {
-        const message = await sendMessage(ctx.chat.id, 'Give me a sec! on it...')
+        const message = await sendMessage(ctx.chat.id, '⏳...')
         const responseFronGPT = await handleGPT(ctx, ctx.message.text)
         return await updateMessage(ctx.chat.id, message.message_id, responseFronGPT)
     }
@@ -36,7 +36,7 @@ bot.on('text', async ctx => {
 });
 
 bot.on('voice', async ctx => {
-    const message = await sendMessage(ctx.chat.id, 'Give me a sec! I will send you the result...')
+    const message = await sendMessage(ctx.chat.id, '⏳...')
     const file = await ctx.telegram.getFileLink(ctx.message.voice.file_id)
     const downloadedFileName = await downloadVoice(ctx, ctx.message.voice.file_id, file.href)
     const text = await getTextFromSpeech(`./voices/${downloadedFileName}.ogg`)
