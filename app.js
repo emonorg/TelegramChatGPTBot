@@ -8,7 +8,7 @@ import Picovoice from './lib/picovoice.js'
 const telegramAccessKey = process.env.TELEGRAM_PROD_ACCESS_KEY
 const telegramSandBoxAccessKey = process.env.TELEGRAM_SANDBOX_ACCESS_KEY
 
-const bot = new Telegraf(telegramSandBoxAccessKey)
+const bot = new Telegraf(telegramAccessKey)
 const db = new DB()
 const chatGPT = new ChatGPT()
 const picoVoice = new Picovoice()
