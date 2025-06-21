@@ -16,7 +16,3 @@ Telegram bot to chat with OpenAI's chatgpt which supports conversation context a
 
 
 2. Use PM2 to start the service. 
-
-
-# Chat context support
-The best way to keep the gpt be aware of the history of the chat (giving them the context of conversation) is to create prompts including the prevoius question with the output of gpt. I have followed the same approach, however due to the high fee rates, I only included the last message and response. This should be modifiable in future.
